@@ -14,7 +14,7 @@ Credentials for testing:
   raj@gmail.com
   psd: ok
 
-The best part about this Application is,if there are 2 provider Vivek and Chintu, here Vivek can only see the services he posted previosly but not the services Chintu or any others posted. And the seeker can see all the available serives SUCCESSFULLY. And I could plan, code, built, deploy, and hosted in single day in CODEGNAN Hackathon.
+The best part about this Application is,if there are 2 providers Vivek and Chintu, here Vivek can only see the services he posted previosly but not the services Chintu or any others posted. And the seeker can see all the available serives SUCCESSFULLY. And I could plan, code, built, deploy, and hosted in single day in CODEGNAN Hackathon.
 
 
 🚀 Features
