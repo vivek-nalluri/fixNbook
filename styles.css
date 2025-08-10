@@ -1,0 +1,97 @@
+/* Reset & Font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Poppins', sans-serif;
+    height: 100vh;
+}
+
+/* Container Split Layout */
+.container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+}
+
+/* Common Half Styles */
+.half {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-align: center;
+    overflow: hidden;
+    transition: flex 0.5s ease;
+}
+
+/* Background Overlays */
+.provider {
+    background: url('provider-bg.jpg') center/cover no-repeat;
+}
+.seeker {
+    background: url('seeker-bg.jpg') center/cover no-repeat;
+}
+
+.overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(3px);
+}
+
+/* Content Styling */
+.content {
+    position: relative;
+    z-index: 2;
+    max-width: 400px;
+    padding: 20px;
+}
+
+h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+
+p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+/* Button Styling */
+.btn {
+    padding: 12px 25px;
+    border: none;
+    background: rgba(255,255,255,0.85);
+    color: #222;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn:hover {
+    background: white;
+    transform: translateY(-2px);
+}
+
+/* Hover Animation - Enlarges the hovered half */
+.half:hover {
+    flex: 1.2;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    .half {
+        flex: 1;
+    }
+}

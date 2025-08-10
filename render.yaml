@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: service-booking-api
+    env: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app --preload --workers=2 --threads=4 --timeout=120
+    envVars:
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: MONGO_URI
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: https://your-frontend-domain.com,https://your-alt-frontend.com

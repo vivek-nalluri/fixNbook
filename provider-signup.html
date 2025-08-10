@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Sign Up | Urban Connect</title>
+    <link rel="stylesheet" href="styles-auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="provider-body">
+
+<div class="auth-container">
+    <h1>Provider Sign Up</h1>
+    <p>Create your account to start offering services.</p>
+
+    <form action="/provider-signup" method="POST">
+        <input type="text" name="name" placeholder="Full Name / Business Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="auth-link">Already have an account? <a href="provider-login.html">Login</a></p>
+</div>
+
+</body>
+</html>

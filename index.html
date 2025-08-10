@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Connect</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <!-- Service Provider Section -->
+    <div class="half provider" onclick="goToProvider()">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Service Provider</h1>
+            <p>Connect with the city and offer your expertise.</p>
+            <button class="btn">Login as Provider</button>
+        </div>
+    </div>
+
+    <!-- Service Seeker Section -->
+    <div class="half seeker" onclick="goToSeeker()">
+        <div class="overlay"></div>
+        <div class="content">
+            <h1>Service Seeker</h1>
+            <p>Find trusted services instantly, anytime.</p>
+            <button class="btn">Login as Seeker</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function goToProvider() {
+    window.location.href = "provider-login.html"; // Change to Flask route later
+}
+
+function goToSeeker() {
+    window.location.href = "seeker-login.html"; // Change to Flask route later
+}
+</script>
+
+</body>
+</html>

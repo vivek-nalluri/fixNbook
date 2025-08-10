@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seeker Sign Up | Urban Connect</title>
+    <link rel="stylesheet" href="styles-auth.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body class="seeker-body">
+
+<div class="auth-container">
+    <h1>Seeker Sign Up</h1>
+    <p>Create your account to find trusted services instantly.</p>
+
+    <form action="/seeker-signup" method="POST">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+        <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="auth-link">Already have an account? <a href="seeker-login.html">Login</a></p>
+</div>
+
+</body>
+</html>

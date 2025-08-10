@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Provider Dashboard</title>
+<link rel="stylesheet" href="provider-dashboard.css" />
+<style>
+    /* Minimal styling */
+    body { font-family: Arial, sans-serif; max-width: 900px; margin: auto; padding: 20px; }
+    header { text-align: center; margin-bottom: 20px; }
+    .form-section, .services-section { margin-bottom: 40px; }
+    label { display: block; margin-top: 10px; font-weight: bold; }
+    input, textarea, select, button { width: 100%; padding: 8px; margin-top: 5px; }
+    textarea { resize: vertical; height: 80px; }
+    button { background-color: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+    button:hover { background-color: #0056b3; }
+    .service-card { border: 1px solid #ccc; padding: 15px; margin-bottom: 15px; border-radius: 5px; }
+    .service-actions { margin-top: 10px; }
+    .service-actions button { width: auto; margin-right: 8px; }
+    .service-actions button.delete-btn { background-color: #dc3545; }
+    .service-actions button.delete-btn:hover { background-color: #a71d2a; }
+    /* New style for logout button */
+  .logout-section {
+    text-align: center;
+    margin-top: 40px;
+    margin-left: 40%;
+    margin-right: 40%;
+  }
+  .logout-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .logout-btn:hover {
+    background-color: #5a6268;
+  }
+    
+</style>
+</head>
+<body>
+<header>
+    <h1>Provider Dashboard</h1>
+</header>
+
+<main>
+    <section class="form-section">
+        <h2 id="formTitle">Add New Service</h2>
+        <!-- Add enctype for file upload -->
+        <form id="serviceForm" enctype="multipart/form-data">
+            <input type="hidden" id="serviceId" value="" />
+            <label>Service Title:</label>
+            <input type="text" id="title" name="title" required />
+
+            <label>Description:</label>
+            <textarea id="description" name="description" required></textarea>
+
+            <label>Price (₹):</label>
+            <input type="number" id="price" name="price" required />
+
+            <label>Availability Date:</label>
+            <input type="date" id="date" name="date" required />
+
+            <label>Availability Time:</label>
+            <input type="time" id="time" name="time" required />
+
+            <label>Location:</label>
+            <input type="text" id="location" name="location" required />
+
+            <label>Service Image:</label>
+            <input type="file" id="image" name="image" accept="image/*" />
+
+            <button type="submit" id="submitBtn">Add Service</button>
+        </form>
+    </section>
+
+    <section class="services-section">
+        <h2>My Services</h2>
+        <div id="servicesList">
+            <!-- Services will be rendered here -->
+        </div>
+    </section>
+
+    <!-- Logout Button Section -->
+    <section class="logout-section">
+        <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+    </section>
+</main>
+
+<script>
+    const serviceForm = document.getElementById('serviceForm');
+    const servicesList = document.getElementById('servicesList');
+    const formTitle = document.getElementById('formTitle');
+    const submitBtn = document.getElementById('submitBtn');
+    const serviceIdInput = document.getElementById('serviceId');
+
+    // Fetch and render all services from backend
+    async function fetchServices() {
+        const res = await fetch('/services');
+        const services = await res.json();
+        renderServices(services);
+    }
+
+    function renderServices(services) {
+        servicesList.innerHTML = '';
+        services.forEach(service => {
+            const card = document.createElement('div');
+            card.classList.add('service-card');
+            card.innerHTML = `
+                <h3>${service.title}</h3>
+                <p>${service.description}</p>
+                <p><strong>Price:</strong> ₹${service.price}</p>
+                <p><strong>Availability:</strong> ${service.date} at ${service.time}</p>
+                <p><strong>Location:</strong> ${service.location}</p>
+                <div class="service-actions">
+                    <button onclick="editService('${service._id.$oid}')">Edit</button>
+                    <button class="delete-btn" onclick="deleteService('${service._id.$oid}')">Delete</button>
+                </div>
+            `;
+            servicesList.appendChild(card);
+        });
+    }
+
+    serviceForm.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        // Create formData object for file upload + text data
+        const formData = new FormData();
+        formData.append('title', document.getElementById('title').value);
+        formData.append('description', document.getElementById('description').value);
+        formData.append('price', Number(document.getElementById('price').value));
+        formData.append('date', document.getElementById('date').value);
+        formData.append('time', document.getElementById('time').value);
+        formData.append('location', document.getElementById('location').value);
+        const imageFile = document.getElementById('image').files[0];
+        if (imageFile) {
+            formData.append('image', imageFile);
+        }
+
+        const serviceId = serviceIdInput.value;
+
+        if (serviceId) {
+            // Edit existing service
+            const res = await fetch(`/services/${serviceId}`, {
+                method: 'PUT',
+                body: formData
+            });
+            if (res.ok) {
+                alert('Service updated successfully');
+            }
+        } else {
+            // Add new service
+            const res = await fetch('/services', {
+                method: 'POST',
+                body: formData
+            });
+            if (res.ok) {
+                alert('Service added successfully');
+            }
+        }
+
+        serviceForm.reset();
+        serviceIdInput.value = '';
+        formTitle.textContent = 'Add New Service';
+        submitBtn.textContent = 'Add Service';
+        fetchServices();
+    });
+
+    function editService(id) {
+        fetch(`/services`)
+            .then(res => res.json())
+            .then(services => {
+                const service = services.find(s => s._id.$oid === id);
+                if (!service) return alert('Service not found');
+                document.getElementById('title').value = service.title;
+                document.getElementById('description').value = service.description;
+                document.getElementById('price').value = service.price;
+                document.getElementById('date').value = service.date;
+                document.getElementById('time').value = service.time;
+                document.getElementById('location').value = service.location;
+                serviceIdInput.value = id;
+                formTitle.textContent = 'Edit Service';
+                submitBtn.textContent = 'Update Service';
+            });
+    }
+
+    async function deleteService(id) {
+        if (!confirm('Are you sure you want to delete this service?')) return;
+        const res = await fetch(`/services/${id}`, { method: 'DELETE' });
+        if (res.ok) {
+            alert('Service deleted');
+            fetchServices();
+        }
+    }
+
+    // Initial fetch
+    fetchServices();
+</script>
+</body>
+</html>

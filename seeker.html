@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Service Seeker - Available Services</title>
+<link rel="stylesheet" href="seeker.css" />
+<script src="https://js.stripe.com/v3/"></script>  <!-- Stripe JS -->
+<style>
+  /* Minimal styles for card element container and modal */
+  #paymentModal {
+    display: none;
+    position: fixed; top: 0; left: 0; right:0; bottom:0;
+    background: rgba(0,0,0,0.5);
+    justify-content: center; align-items: center;
+  }
+  #paymentModal.active {
+    display: flex;
+  }
+  #paymentForm {
+    background: white; padding: 20px; border-radius: 8px; width: 300px;
+  }
+  #card-element {
+    border: 1px solid #ccc; padding: 10px; border-radius: 4px;
+  }
+  #paymentError {
+    color: red; margin-top: 10px;
+  }
+  #closeModal {
+    cursor: pointer; float: right; font-weight: bold;
+  }
+  img.service-image {
+    max-width: 100%;
+    max-height: 150px;
+    display: block;
+    margin-top: 10px;
+    border-radius: 5px;
+  }
+  /* Logout button styles */
+  .logout-section {
+    text-align: center;
+    margin-top: 40px;
+  }
+  .logout-btn {
+    background-color: #6c757d;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .logout-btn:hover {
+    background-color: #5a6268;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Available Services</h1>
+  <p>Browse the services provided by providers</p>
+</header>
+
+<main>
+  <div id="servicesContainer" class="services-container">
+    <!-- Service cards will be inserted here -->
+  </div>
+</main>
+
+<!-- Logout Button Section -->
+<section class="logout-section">
+  <button class="logout-btn" onclick="window.location.href='/logout'">Logout</button>
+</section>
+
+<!-- Payment Modal -->
+<div id="paymentModal">
+  <form id="paymentForm">
+    <span id="closeModal">&times;</span>
+    <h3>Complete Payment</h3>
+    <div id="card-element"></div>
+    <button type="submit" id="payBtn">Pay</button>
+    <div id="paymentError"></div>
+  </form>
+</div>
+
+<script>
+  const stripe = Stripe('pk_test_51RuAdfAu1tMPboJHXdJ5FMpvxYdkAv2jl6V8ysUwUTBsU4h7l9Ijnwu6wv37yz5lKJfv9UbbmfV9lneXJDriOk9L004VSc1vla'); // <-- Replace with your Stripe publishable key
+  const elements = stripe.elements();
+  const cardElement = elements.create('card');
+  cardElement.mount('#card-element');
+
+  let currentPaymentIntentClientSecret = null;
+  let currentServiceTitle = '';
+
+  async function loadServices() {
+    try {
+      const response = await fetch('/services');
+      if (!response.ok) throw new Error('Failed to fetch services');
+      const services = await response.json();
+
+      const container = document.getElementById('servicesContainer');
+      container.innerHTML = '';
+
+      services.forEach(service => {
+        if (service.availability && service.availability.toLowerCase() !== 'available') return;
+
+        const card = document.createElement('div');
+        card.className = 'service-card';
+
+        card.innerHTML = `
+          <h3>${service.title || 'No Title'}</h3>
+          <img src="/services/image/${service._id.$oid}" alt="Service Image" style="max-width:100%; height:auto; margin-bottom:10px;" />
+          <p>${service.description || 'No Description'}</p>
+          <p><strong>Price:</strong> ₹${service.price || 'N/A'}</p>
+          <p><strong>Available on:</strong> ${service.date || 'N/A'} at ${service.time || 'N/A'}</p>
+          <p><strong>Location:</strong> ${service.location || 'N/A'}</p>
+          <button class="book-btn" data-id="${service._id.$oid}">Book</button>
+        `;
+
+        container.appendChild(card);
+      });
+
+      document.querySelectorAll('.book-btn').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          const serviceId = e.target.getAttribute('data-id');
+
+          const serviceResp = await fetch(`/services/${serviceId}`);
+          if (!serviceResp.ok) {
+            alert('Failed to fetch service details.');
+            return;
+          }
+          const service = await serviceResp.json();
+
+          if (!service.price || service.price <= 0) {
+            alert('Invalid price for this service.');
+            return;
+          }
+
+          currentServiceTitle = service.title || '';
+
+          const paymentIntentResp = await fetch('/create-payment-intent', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ amount: Math.round(service.price * 100) }) // price in paise
+          });
+
+          if (!paymentIntentResp.ok) {
+            alert('Failed to initiate payment.');
+            return;
+          }
+
+          const paymentIntentData = await paymentIntentResp.json();
+          currentPaymentIntentClientSecret = paymentIntentData.clientSecret;
+
+          showPaymentModal();
+        });
+      });
+
+      if (!container.hasChildNodes()) {
+        container.innerHTML = '<p>No available services found.</p>';
+      }
+    } catch (error) {
+      document.getElementById('servicesContainer').innerHTML = '<p>Error loading services.</p>';
+      console.error(error);
+    }
+  }
+
+  const paymentModal = document.getElementById('paymentModal');
+  const paymentForm = document.getElementById('paymentForm');
+  const paymentError = document.getElementById('paymentError');
+  const closeModalBtn = document.getElementById('closeModal');
+
+  function showPaymentModal() {
+    paymentError.textContent = '';
+    paymentModal.classList.add('active');
+  }
+  function hidePaymentModal() {
+    paymentModal.classList.remove('active');
+    paymentError.textContent = '';
+    cardElement.clear();
+  }
+
+  closeModalBtn.onclick = () => {
+    hidePaymentModal();
+  };
+
+  paymentForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    paymentError.textContent = '';
+
+    const {error, paymentIntent} = await stripe.confirmCardPayment(currentPaymentIntentClientSecret, {
+      payment_method: {
+        card: cardElement,
+      }
+    });
+
+    if (error) {
+      paymentError.textContent = error.message;
+    } else if (paymentIntent && paymentIntent.status === 'succeeded') {
+      alert(`Payment successful for "${currentServiceTitle}"!`);
+      hidePaymentModal();
+      window.location.href = '/payment-success';
+    }
+  });
+
+  window.onload = loadServices;
+</script>
+</body>
+</html>
