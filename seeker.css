@@ -1,237 +1,556 @@
-/* seeker.css */
+/* seeker.css  — Pro, responsive, animated */
 
-/* Reset and base */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* =========================================
+   0) Modern Reset & Base
+========================================= */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 
 body {
-  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-  color: #333;
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "Poppins", sans-serif;
+  line-height: 1.5;
   min-height: 100vh;
+  color: #1f2937; /* slate-800 */
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem 1rem;
+  padding: env(safe-area-inset-top) clamp(12px, 3vw, 24px)
+           env(safe-area-inset-bottom) clamp(12px, 3vw, 24px);
 }
 
-/* Header */
+/* Fluid Type & Design Tokens */
+:root {
+  /* spacing */
+  --space-1: clamp(6px, 0.4vw, 8px);
+  --space-2: clamp(10px, 0.7vw, 12px);
+  --space-3: clamp(12px, 1vw, 16px);
+  --space-4: clamp(16px, 1.4vw, 20px);
+  --space-5: clamp(20px, 2vw, 28px);
+  --space-6: clamp(24px, 2.6vw, 36px);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+
+  /* typography */
+  --fs-h1: clamp(1.8rem, 2.4vw + 1rem, 3rem);
+  --fs-h2: clamp(1.2rem, 1.3vw + 0.8rem, 1.75rem);
+  --fs-body: clamp(0.95rem, 0.3vw + 0.9rem, 1.05rem);
+  --fs-small: clamp(0.85rem, 0.2vw + 0.82rem, 0.95rem);
+  --fs-btn: clamp(0.95rem, 0.25vw + 0.9rem, 1.05rem);
+
+  /* palette (light) */
+  --bg: #ffffff;
+  --bg-soft: #f7f9fc;
+  --fg: #1f2937;        /* slate-800 */
+  --muted: #475569;     /* slate-600 */
+  --muted-2: #64748b;   /* slate-500 */
+  --card: #ffffff;
+  --border: #dbe3f0;
+  --shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+
+  /* brand gradient */
+  --brand-1: #6a11cb;
+  --brand-2: #2575fc;
+  --brand-1-d: #4b0cb9;
+  --brand-2-d: #1f59d3;
+
+  /* acccents */
+  --accent: #0ea5e9;    /* sky-500 */
+  --danger: #ef4444;    /* red-500 */
+
+  /* effects */
+  --focus-ring: 0 0 0 4px rgba(37, 117, 252, 0.2);
+}
+
+/* Dark mode polish (automatic, if user prefers) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0b1220;
+    --bg-soft: #0f172a;  /* slate-900 */
+    --fg: #e5e7eb;       /* gray-200 */
+    --muted: #cbd5e1;    /* slate-300 */
+    --muted-2: #94a3b8;  /* slate-400 */
+    --card: #0f172a;
+    --border: #1f2a44;
+    --shadow: 0 12px 28px rgba(0,0,0,0.35);
+
+    --brand-1: #7c3aed;
+    --brand-2: #3b82f6;
+    --brand-1-d: #6d28d9;
+    --brand-2-d: #2563eb;
+    --accent: #22d3ee;
+    --danger: #f87171;
+  }
+  body {
+    background: radial-gradient(1200px 600px at 20% -10%, #0f172a 0%, #0b1220 60%, #070b13 100%);
+  }
+}
+
+/* Utility */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* =========================================
+   1) Header
+========================================= */
 header {
   text-align: center;
-  margin-bottom: 2rem;
-  animation: fadeInDown 0.7s ease forwards;
+  margin: var(--space-6) 0 var(--space-4);
+  animation: fadeInDown .6s ease both;
 }
-
 header h1 {
-  font-size: 2.8rem;
-  color: #2c3e50;
-  margin-bottom: 0.3rem;
-  letter-spacing: 1.2px;
+  font-size: var(--fs-h1);
+  color: var(--fg);
+  margin-bottom: var(--space-2);
+  letter-spacing: 0.6px;
+  font-weight: 800;
+  line-height: 1.15;
+  /* subtle gradient ink */
+  background: linear-gradient(90deg, var(--brand-2), var(--brand-1));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
-
 header p {
-  color: #34495e;
-  font-size: 1.1rem;
+  color: var(--muted);
+  font-size: var(--fs-body);
   font-weight: 500;
 }
 
-/* Container for services */
+/* =========================================
+   2) Services Grid
+========================================= */
 .services-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  width: 100%;
-  max-width: 1100px;
-  animation: fadeInUp 0.7s ease forwards;
+  grid-template-columns: repeat(12, 1fr);
+  gap: var(--space-5);
+  width: min(1200px, 96vw);
+  padding-bottom: var(--space-6);
+  animation: fadeInUp .6s ease both;
 }
 
-/* Each service card */
+/* Responsive columns */
+@media (max-width: 1280px) {
+  .services-container { width: min(1100px, 96vw); }
+}
+@media (max-width: 1024px) {
+  .services-container { gap: var(--space-4); }
+}
+@media (max-width: 900px) {
+  .services-container { gap: var(--space-3); }
+}
+@media (max-width: 768px) {
+  .services-container { gap: var(--space-3); }
+}
+
+/* =========================================
+   3) Service Card
+========================================= */
 .service-card {
-  background: #fff;
-  border-radius: 15px;
-  padding: 1.8rem 1.5rem;
-  box-shadow: 0 8px 15px rgba(44, 62, 80, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  grid-column: span 4; /* 3 columns on wide screens */
+  background: var(--card);
+  border-radius: var(--radius-md);
+  padding: var(--space-5);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
   position: relative;
   overflow: hidden;
   cursor: default;
+  isolation: isolate;
+  animation: cardIn .5s ease both;
+}
+@media (max-width: 1200px) { .service-card { grid-column: span 6; } } /* 2 columns */
+@media (max-width: 640px)  { .service-card { grid-column: span 12; } } /* 1 column */
+
+@media (hover: hover) and (pointer: fine) {
+  .service-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 16px 30px rgba(2, 6, 23, 0.12);
+    border-color: rgba(37, 117, 252, 0.45);
+  }
 }
 
-.service-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 25px rgba(44, 62, 80, 0.25);
+/* Decorative gradient corner */
+.service-card::before {
+  content: "";
+  position: absolute;
+  inset: -40% -40% auto auto;
+  width: 220px; height: 220px;
+  background: radial-gradient(120px 120px at 80% 20%, rgba(37,117,252,0.25), transparent 60%),
+              radial-gradient(160px 160px at 95% 5%, rgba(106,17,203,0.2), transparent 70%);
+  transform: translateZ(0);
+  pointer-events: none;
+  z-index: 0;
+  opacity: .5;
 }
 
-/* Service card headings */
+/* Card Content */
 .service-card h3 {
-  font-size: 1.5rem;
-  margin-bottom: 0.8rem;
-  color: #2c3e50;
+  font-size: clamp(1.1rem, 0.55vw + 1rem, 1.5rem);
+  margin: 0 0 var(--space-2) 0;
+  color: var(--fg);
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+}
+.service-card p {
+  color: var(--muted-2);
+  font-size: var(--fs-body);
+  line-height: 1.55;
+  margin: 0 0 var(--space-2) 0;
+  position: relative;
+  z-index: 1;
+}
+.service-card p strong {
+  color: var(--fg);
   font-weight: 700;
 }
 
-/* Paragraphs inside card */
-.service-card p {
-  color: #555d66;
-  line-height: 1.4;
-  margin-bottom: 0.6rem;
-  font-size: 0.95rem;
+/* Optional service image support (if present) */
+.service-card img,
+.service-card .service-image {
+  display: block;
+  width: 100%;
+  max-height: 180px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  margin: 0 0 var(--space-3) 0;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
 }
 
-/* Price styling */
-.service-card p strong {
-  color: #34495e;
-  font-weight: 600;
+/* Subtle divider */
+.service-card .divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
+  margin: var(--space-3) 0 var(--space-2);
 }
 
-/* Book button */
+/* Tags / chips (optional) */
+.tags {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin-bottom: var(--space-2);
+}
+.tag {
+  font-size: var(--fs-small);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--bg-soft);
+}
+
+/* =========================================
+   4) Book Button (with subtle ripple)
+========================================= */
 .book-btn {
   display: inline-block;
-  margin-top: 1rem;
-  padding: 0.6rem 1.4rem;
-  font-size: 1rem;
-  font-weight: 600;
+  margin-top: var(--space-2);
+  padding: 0.7rem 1.4rem;
+  font-size: var(--fs-btn);
+  font-weight: 800;
   color: #fff;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
   border: none;
-  border-radius: 30px;
+  border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(38, 103, 251, 0.4);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 20px rgba(37, 117, 252, 0.35);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
   user-select: none;
+  position: relative;
+  overflow: hidden;
+}
+.book-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 8px 20px rgba(37, 117, 252, 0.4);
+}
+@media (hover: hover) and (pointer: fine) {
+  .book-btn:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.02);
+    box-shadow: 0 10px 24px rgba(25, 68, 187, 0.45);
+  }
+}
+.book-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 6px 16px rgba(25, 68, 187, 0.35);
 }
 
-.book-btn:hover {
-  background: linear-gradient(135deg, #4b0cb9, #1f59d3);
-  box-shadow: 0 8px 20px rgba(25, 68, 187, 0.6);
-  transform: scale(1.05);
+/* Ripple (CSS-only) */
+.book-btn::after {
+  content: "";
+  position: absolute;
+  inset: 50% auto auto 50%;
+  width: 0; height: 0;
+  background: radial-gradient(closest-side, rgba(255,255,255,0.35), transparent);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  opacity: 0;
+  transition: width .45s ease, height .45s ease, opacity .45s ease;
+  pointer-events: none;
+}
+.book-btn:active::after {
+  width: 240px; height: 240px;
+  opacity: 1;
 }
 
-/* Payment Modal */
+/* =========================================
+   5) Empty / Error States
+========================================= */
+.empty-state,
+.error-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--muted);
+  font-size: var(--fs-body);
+  padding: var(--space-6) 0 var(--space-5);
+}
+
+/* Skeleton loading style (optional) */
+.service-card.loading * { visibility: hidden; }
+.service-card.loading {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(
+    90deg,
+    var(--bg) 0%,
+    var(--bg-soft) 50%,
+    var(--bg) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.2s linear infinite;
+}
+
+/* =========================================
+   6) Payment Modal (Stripe)
+========================================= */
 #paymentModal {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0,0,0,0.65);
+  inset: 0;
+  background: rgba(2, 6, 23, 0.55);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   justify-content: center;
   align-items: center;
   z-index: 9999;
-  animation: fadeIn 0.3s ease forwards;
+  animation: fadeIn .25s ease both;
+  padding: var(--space-4);
 }
-
-#paymentModal.active {
-  display: flex;
-}
+#paymentModal.active { display: flex; }
 
 #paymentForm {
-  background: #fff;
-  padding: 2rem 2.5rem;
-  border-radius: 14px;
-  width: 320px;
-  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  background: var(--card);
+  color: var(--fg);
+  padding: clamp(18px, 2.2vw, 28px) clamp(20px, 2.4vw, 34px);
+  border-radius: var(--radius-lg);
+  width: min(380px, 92vw);
+  box-shadow: 0 16px 40px rgba(2, 6, 23, 0.28);
   position: relative;
-  animation: slideUp 0.35s ease forwards;
+  animation: scaleIn .28s ease both;
+  border: 1px solid var(--border);
 }
 
 /* Close icon */
 #closeModal {
   position: absolute;
-  top: 15px;
-  right: 18px;
+  top: 12px; right: 14px;
   font-size: 1.6rem;
-  font-weight: 700;
-  color: #777;
+  font-weight: 800;
+  color: var(--muted-2);
   cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-#closeModal:hover {
-  color: #2575fc;
-}
-
-/* Payment form title */
-#paymentForm h3 {
-  font-weight: 700;
-  color: #2c3e50;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-/* Stripe card element container */
-#card-element {
-  border: 1.8px solid #ccc;
+  line-height: 1;
+  padding: 4px 8px;
   border-radius: 8px;
-  padding: 14px 12px;
-  margin-bottom: 1rem;
-  box-shadow: inset 0 2px 5px rgb(0 0 0 / 0.06);
-  transition: border-color 0.3s ease;
+  transition: background-color .18s ease, color .18s ease, transform .18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  #closeModal:hover {
+    color: var(--brand-2);
+    background: var(--bg-soft);
+    transform: rotate(8deg);
+  }
 }
 
+/* Modal title */
+#paymentForm h3 {
+  font-weight: 900;
+  color: var(--fg);
+  margin: 0 0 var(--space-3) 0;
+  text-align: center;
+  font-size: var(--fs-h2);
+}
+
+/* Stripe card element */
+#card-element {
+  border: 1.8px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px 12px;
+  margin-bottom: var(--space-3);
+  background: var(--bg);
+  box-shadow: inset 0 2px 5px rgba(0,0,0,0.06);
+  transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+}
 #card-element.StripeElement--focus {
-  border-color: #2575fc;
-  box-shadow: 0 0 6px #2575fc;
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 4px rgba(37,117,252,0.18);
+  background: var(--bg);
 }
 
 /* Pay button */
 #payBtn {
   width: 100%;
-  padding: 0.65rem 0;
-  font-size: 1.15rem;
-  font-weight: 700;
+  padding: 0.7rem 0;
+  font-size: var(--fs-btn);
+  font-weight: 900;
   color: #fff;
-  background: linear-gradient(135deg, #6a11cb, #2575fc);
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
   border: none;
-  border-radius: 30px;
+  border-radius: 999px;
   cursor: pointer;
-  box-shadow: 0 6px 15px rgba(38, 103, 251, 0.4);
-  transition: background 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 22px rgba(37, 117, 252, 0.35);
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
   user-select: none;
 }
-
-#payBtn:hover {
-  background: linear-gradient(135deg, #4b0cb9, #1f59d3);
-  box-shadow: 0 8px 20px rgba(25, 68, 187, 0.6);
-  transform: scale(1.05);
+#payBtn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring), 0 10px 22px rgba(37,117,252,0.4);
+}
+@media (hover: hover) and (pointer: fine) {
+  #payBtn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(25, 68, 187, 0.45);
+    filter: brightness(1.03);
+  }
+}
+#payBtn:active {
+  transform: translateY(0);
+  box-shadow: 0 8px 18px rgba(25, 68, 187, 0.35);
 }
 
-/* Payment error message */
+/* Payment error */
 #paymentError {
-  margin-top: 0.8rem;
-  color: #e74c3c;
-  font-weight: 600;
-  font-size: 0.9rem;
+  margin-top: var(--space-2);
+  color: var(--danger);
+  font-weight: 700;
+  font-size: var(--fs-small);
   min-height: 1.2em;
   text-align: center;
 }
 
-/* Animations */
+/* =========================================
+   7) Header & Layout Fine-tune
+========================================= */
+main { width: 100%; }
+
+/* =========================================
+   8) Animations & Motion Preferences
+========================================= */
 @keyframes fadeInDown {
-  from {opacity: 0; transform: translateY(-15px);}
-  to {opacity: 1; transform: translateY(0);}
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeInUp {
-  from {opacity: 0; transform: translateY(15px);}
-  to {opacity: 1; transform: translateY(0);}
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
-
 @keyframes fadeIn {
-  from {opacity: 0;}
-  to {opacity: 1;}
+  from { opacity: 0; } to { opacity: 1; }
+}
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+@keyframes cardIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-@keyframes slideUp {
-  from {opacity: 0; transform: translateY(25px);}
-  to {opacity: 1; transform: translateY(0);}
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
 }
 
-/* Responsive tweaks */
-@media (max-width: 400px) {
-  #paymentForm {
-    width: 90vw;
-    padding: 1.5rem;
+/* High contrast preference */
+@media (prefers-contrast: more) {
+  #card-element { border-color: var(--brand-2); }
+  .book-btn, #payBtn {
+    box-shadow: 0 0 0 2px #fff inset, 0 0 0 3px var(--brand-2);
   }
+}
+
+/* =========================================
+   9) Responsive Type & Spacing
+========================================= */
+@media (max-width: 1280px) {
+  header { margin-top: var(--space-6); }
+}
+@media (max-width: 1024px) {
+  header { margin-bottom: var(--space-4); }
+}
+@media (max-width: 900px) {
+  header h1 { letter-spacing: 0.4px; }
+}
+@media (max-width: 768px) {
+  header { margin-top: var(--space-5); }
+}
+@media (max-width: 640px) {
+  header h1 { letter-spacing: 0.2px; }
+}
+@media (max-width: 420px) and (orientation: landscape) {
+  header { margin: var(--space-4) 0; }
+  #paymentForm { padding: var(--space-3) var(--space-4); }
+}
+
+/* =========================================
+   10) Optional Toast (if you add one later)
+========================================= */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--card);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 10px 14px;
+  box-shadow: var(--shadow);
+  font-size: var(--fs-small);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 99999;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================================
+   11) Footer (if you add one later)
+========================================= */
+footer {
+  margin-top: auto;
+  color: var(--muted-2);
+  font-size: var(--fs-small);
+  padding: var(--space-4) 0 var(--space-2);
+  text-align: center;
 }
