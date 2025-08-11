@@ -2,6 +2,8 @@ FixNBook – Service Booking Platform
 FixNBook is a full-stack web application that connects service seekers with service providers, enabling users to browse, book, and pay for services securely.
 Built with Flask, MongoDB Atlas, and Stripe, it supports provider management, booking scheduling, and secure payment processing.
 
+App is live: https://fixnbook.onrender.com
+
 Credentials for testing:
 
   Providers Credential
