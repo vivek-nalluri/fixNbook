@@ -31,10 +31,10 @@ body {
 
 /* Background Overlays */
 .provider {
-    background: url('provider-bg.jpg') center/cover no-repeat;
+    background: url('images/provider.png') center/cover no-repeat;
 }
 .seeker {
-    background: url('seeker-bg.jpg') center/cover no-repeat;
+    background: url('images/seeker.webp') center/cover no-repeat;
 }
 
 .overlay {
