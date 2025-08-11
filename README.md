@@ -16,6 +16,12 @@ Credentials for testing:
   raj@gmail.com
   psd: ok
 
+For Payment:
+  4242 4242 4242 4242
+  month and year must be in future
+  enter random 3 digits for CVC
+  enter random 5 digits for ZIP
+
 The best part about this Application is,if there are 2 providers Vivek and Chintu, here Vivek can only see the services he posted previosly but not the services Chintu or any others posted. And the seeker can see all the available serives SUCCESSFULLY. And I could plan, code, built, deploy, and hosted in single day in CODEGNAN Hackathon.
 
 
